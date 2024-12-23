@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { removeBackground } from '@imgly/background-removal'
 import './App.css'
-
+import { Analytics } from "@vercel/analytics/react"
 const FONT_FAMILIES = [
   'Arial',
   'Times New Roman',
@@ -325,345 +325,348 @@ function App() {
   }, []);
 
   return (
-    <main className="image-editor">
-      <header className="editor-header">
-        <h1 className="editor-title">Free Online Image Editor</h1>
-        <p className="editor-subtitle">Remove background, add text behind images, and adjust photos easily</p>
-        <div className="upload-section">
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageUpload} 
-            id="file-input"
-            className="file-input"
-          />
-          <label htmlFor="file-input" className="file-label">
-            <span className="upload-icon">📁</span>
-            {originalImage ? 'Change Image' : 'Upload Image'}
-          </label>
-        </div>
-      </header>
-      
-      {originalImage && (
-        <section className="editor-container">
-          <div className="controls-panel">
-            <div className="controls-wrapper">
-              <div className="control-group compact">
-                <div className="group-header">
-                  <h3>🎨 Photo Adjustments</h3>
-                  <button 
-                    onClick={resetPhotoEdits}
-                    className="reset-btn"
-                    title="Reset all adjustments"
-                  >
-                    ↺ Reset
-                  </button>
-                </div>
-                <div className="photo-controls-grid">
-                  <div className="range-control">
-                    <span>
-                      Brightness
-                      <span className="range-value">{photoEdits.brightness}%</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="200"
-                      value={photoEdits.brightness}
-                      onChange={(e) => handlePhotoEdit('brightness', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="range-control">
-                    <span>
-                      Contrast
-                      <span className="range-value">{photoEdits.contrast}%</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="200"
-                      value={photoEdits.contrast}
-                      onChange={(e) => handlePhotoEdit('contrast', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="range-control">
-                    <span>
-                      Saturation
-                      <span className="range-value">{photoEdits.saturation}%</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="200"
-                      value={photoEdits.saturation}
-                      onChange={(e) => handlePhotoEdit('saturation', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="range-control">
-                    <span>
-                      Grayscale
-                      <span className="range-value">{photoEdits.grayscale}%</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={photoEdits.grayscale}
-                      onChange={(e) => handlePhotoEdit('grayscale', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="range-control">
-                    <span>
-                      Rotate
-                      <span className="range-value">{photoEdits.rotate}°</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="360"
-                      value={photoEdits.rotate}
-                      onChange={(e) => handlePhotoEdit('rotate', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="range-control">
-                    <span>
-                      Zoom
-                      <span className="range-value">{photoEdits.zoom}%</span>
-                    </span>
-                    <input
-                      type="range"
-                      min="50"
-                      max="200"
-                      value={photoEdits.zoom}
-                      onChange={(e) => handlePhotoEdit('zoom', Number(e.target.value))}
-                    />
-                  </div>
-
-                  <div className="button-controls">
-                    <button
-                      className={`style-btn ${photoEdits.flipHorizontal ? 'active' : ''}`}
-                      onClick={() => handlePhotoEdit('flipHorizontal', !photoEdits.flipHorizontal)}
-                      title="Flip Horizontal"
+    <>
+      <main className="image-editor">
+        <header className="editor-header">
+          <h1 className="editor-title">Free Online Image Editor</h1>
+          <p className="editor-subtitle">Remove background, add text behind images, and adjust photos easily</p>
+          <div className="upload-section">
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageUpload} 
+              id="file-input"
+              className="file-input"
+            />
+            <label htmlFor="file-input" className="file-label">
+              <span className="upload-icon">📁</span>
+              {originalImage ? 'Change Image' : 'Upload Image'}
+            </label>
+          </div>
+        </header>
+        
+        {originalImage && (
+          <section className="editor-container">
+            <div className="controls-panel">
+              <div className="controls-wrapper">
+                <div className="control-group compact">
+                  <div className="group-header">
+                    <h3>🎨 Photo Adjustments</h3>
+                    <button 
+                      onClick={resetPhotoEdits}
+                      className="reset-btn"
+                      title="Reset all adjustments"
                     >
-                      ↔️
-                    </button>
-                    <button
-                      className={`style-btn ${photoEdits.flipVertical ? 'active' : ''}`}
-                      onClick={() => handlePhotoEdit('flipVertical', !photoEdits.flipVertical)}
-                      title="Flip Vertical"
-                    >
-                      ↕️
+                      ↺ Reset
                     </button>
                   </div>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => processImageBackground(originalImage)}
-                disabled={isProcessing}
-                className="remove-bg-btn"
-              >
-                {isProcessing ? 'Processing...' : '🪄 Remove Background'}
-              </button>
-
-              {isBackgroundRemoved && (
-                <div className="control-group compact">
-                  <h3>🎨 Background Settings</h3>
-                  <div className="toggle-group">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={showBackground}
-                        onChange={(e) => setShowBackground(e.target.checked)}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                    <span>{showBackground ? 'Original' : 'Custom'}</span>
-                  </div>
-
-                  {!showBackground && (
-                    <div className="color-picker">
-                      <label htmlFor="bg-color">Color:</label>
-                      <div className="color-input-wrapper">
-                        <input 
-                          type="color" 
-                          id="bg-color"
-                          value={backgroundColor}
-                          onChange={(e) => setBackgroundColor(e.target.value)}
-                        />
-                        <span className="color-value">{backgroundColor}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {isBackgroundRemoved && (
-                <div className="control-group compact">
-                  <h3>✏️ Text Settings</h3>
-                  <div className="text-controls-grid">
-                    <input 
-                      type="text"
-                      placeholder="Enter text..."
-                      value={backgroundText}
-                      onChange={(e) => setBackgroundText(e.target.value)}
-                      className="text-input"
-                    />
-                    
-                    <div className="text-style-controls">
-                      <button
-                        className={`style-btn ${textStyle.bold ? 'active' : ''}`}
-                        onClick={() => setTextStyle(prev => ({ ...prev, bold: !prev.bold }))}
-                        title="Bold"
-                      >
-                        B
-                      </button>
-                      <button
-                        className={`style-btn ${textStyle.italic ? 'active' : ''}`}
-                        onClick={() => setTextStyle(prev => ({ ...prev, italic: !prev.italic }))}
-                        title="Italic"
-                      >
-                        I
-                      </button>
-                      <button
-                        className={`style-btn ${textStyle.underline ? 'active' : ''}`}
-                        onClick={() => setTextStyle(prev => ({ ...prev, underline: !prev.underline }))}
-                        title="Underline"
-                      >
-                        U
-                      </button>
-                      <button
-                        className={`style-btn ${textStyle.uppercase ? 'active' : ''}`}
-                        onClick={() => setTextStyle(prev => ({ ...prev, uppercase: !prev.uppercase }))}
-                        title="Uppercase"
-                      >
-                        AA
-                      </button>
-                      <button
-                        className={`style-btn ${textStyle.textShadow ? 'active' : ''}`}
-                        onClick={() => setTextStyle(prev => ({ ...prev, textShadow: !prev.textShadow }))}
-                        title="Text Shadow"
-                      >
-                        S
-                      </button>
-                    </div>
-
-                    <div className="letter-spacing-control">
+                  <div className="photo-controls-grid">
+                    <div className="range-control">
                       <span>
-                        Letter Spacing
-                        <span className="range-value">{textStyle.letterSpacing}px</span>
+                        Brightness
+                        <span className="range-value">{photoEdits.brightness}%</span>
                       </span>
                       <input
                         type="range"
                         min="0"
-                        max="20"
-                        step="0.5"
-                        value={textStyle.letterSpacing}
-                        onChange={(e) => setTextStyle(prev => ({
-                          ...prev,
-                          letterSpacing: Number(e.target.value)
-                        }))}
+                        max="200"
+                        value={photoEdits.brightness}
+                        onChange={(e) => handlePhotoEdit('brightness', Number(e.target.value))}
                       />
                     </div>
 
-                    <div className="text-properties">
-                      <select 
-                        value={fontFamily}
-                        onChange={(e) => setFontFamily(e.target.value)}
-                        className="font-select"
-                      >
-                        {FONT_FAMILIES.map(font => (
-                          <option 
-                            key={font} 
-                            value={font}
-                            style={{ fontFamily: font }}
-                          >
-                            {font}
-                          </option>
-                        ))}
-                      </select>
-
-                      <div className="color-input-wrapper compact">
-                        <input 
-                          type="color"
-                          value={textColor}
-                          onChange={(e) => setTextColor(e.target.value)}
-                        />
-                      </div>
+                    <div className="range-control">
+                      <span>
+                        Contrast
+                        <span className="range-value">{photoEdits.contrast}%</span>
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="200"
+                        value={photoEdits.contrast}
+                        onChange={(e) => handlePhotoEdit('contrast', Number(e.target.value))}
+                      />
                     </div>
 
-                    <div className="size-position-controls">
-                      <div className="range-control">
-                        <span>Size: {fontSize}px</span>
-                        <input 
+                    <div className="range-control">
+                      <span>
+                        Saturation
+                        <span className="range-value">{photoEdits.saturation}%</span>
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="200"
+                        value={photoEdits.saturation}
+                        onChange={(e) => handlePhotoEdit('saturation', Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="range-control">
+                      <span>
+                        Grayscale
+                        <span className="range-value">{photoEdits.grayscale}%</span>
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={photoEdits.grayscale}
+                        onChange={(e) => handlePhotoEdit('grayscale', Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="range-control">
+                      <span>
+                        Rotate
+                        <span className="range-value">{photoEdits.rotate}°</span>
+                      </span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="360"
+                        value={photoEdits.rotate}
+                        onChange={(e) => handlePhotoEdit('rotate', Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="range-control">
+                      <span>
+                        Zoom
+                        <span className="range-value">{photoEdits.zoom}%</span>
+                      </span>
+                      <input
+                        type="range"
+                        min="50"
+                        max="200"
+                        value={photoEdits.zoom}
+                        onChange={(e) => handlePhotoEdit('zoom', Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="button-controls">
+                      <button
+                        className={`style-btn ${photoEdits.flipHorizontal ? 'active' : ''}`}
+                        onClick={() => handlePhotoEdit('flipHorizontal', !photoEdits.flipHorizontal)}
+                        title="Flip Horizontal"
+                      >
+                        ↔️
+                      </button>
+                      <button
+                        className={`style-btn ${photoEdits.flipVertical ? 'active' : ''}`}
+                        onClick={() => handlePhotoEdit('flipVertical', !photoEdits.flipVertical)}
+                        title="Flip Vertical"
+                      >
+                        ↕️
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => processImageBackground(originalImage)}
+                  disabled={isProcessing}
+                  className="remove-bg-btn"
+                >
+                  {isProcessing ? 'Processing...' : '🪄 Remove Background'}
+                </button>
+
+                {isBackgroundRemoved && (
+                  <div className="control-group compact">
+                    <h3>🎨 Background Settings</h3>
+                    <div className="toggle-group">
+                      <label className="toggle-switch">
+                        <input
+                          type="checkbox"
+                          checked={showBackground}
+                          onChange={(e) => setShowBackground(e.target.checked)}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                      <span>{showBackground ? 'Original' : 'Custom'}</span>
+                    </div>
+
+                    {!showBackground && (
+                      <div className="color-picker">
+                        <label htmlFor="bg-color">Color:</label>
+                        <div className="color-input-wrapper">
+                          <input 
+                            type="color" 
+                            id="bg-color"
+                            value={backgroundColor}
+                            onChange={(e) => setBackgroundColor(e.target.value)}
+                          />
+                          <span className="color-value">{backgroundColor}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {isBackgroundRemoved && (
+                  <div className="control-group compact">
+                    <h3>✏️ Text Settings</h3>
+                    <div className="text-controls-grid">
+                      <input 
+                        type="text"
+                        placeholder="Enter text..."
+                        value={backgroundText}
+                        onChange={(e) => setBackgroundText(e.target.value)}
+                        className="text-input"
+                      />
+                      
+                      <div className="text-style-controls">
+                        <button
+                          className={`style-btn ${textStyle.bold ? 'active' : ''}`}
+                          onClick={() => setTextStyle(prev => ({ ...prev, bold: !prev.bold }))}
+                          title="Bold"
+                        >
+                          B
+                        </button>
+                        <button
+                          className={`style-btn ${textStyle.italic ? 'active' : ''}`}
+                          onClick={() => setTextStyle(prev => ({ ...prev, italic: !prev.italic }))}
+                          title="Italic"
+                        >
+                          I
+                        </button>
+                        <button
+                          className={`style-btn ${textStyle.underline ? 'active' : ''}`}
+                          onClick={() => setTextStyle(prev => ({ ...prev, underline: !prev.underline }))}
+                          title="Underline"
+                        >
+                          U
+                        </button>
+                        <button
+                          className={`style-btn ${textStyle.uppercase ? 'active' : ''}`}
+                          onClick={() => setTextStyle(prev => ({ ...prev, uppercase: !prev.uppercase }))}
+                          title="Uppercase"
+                        >
+                          AA
+                        </button>
+                        <button
+                          className={`style-btn ${textStyle.textShadow ? 'active' : ''}`}
+                          onClick={() => setTextStyle(prev => ({ ...prev, textShadow: !prev.textShadow }))}
+                          title="Text Shadow"
+                        >
+                          S
+                        </button>
+                      </div>
+
+                      <div className="letter-spacing-control">
+                        <span>
+                          Letter Spacing
+                          <span className="range-value">{textStyle.letterSpacing}px</span>
+                        </span>
+                        <input
                           type="range"
-                          value={fontSize}
-                          onChange={(e) => setFontSize(Number(e.target.value))}
-                          min="24"
-                          max="200"
-                          step="2"
+                          min="0"
+                          max="20"
+                          step="0.5"
+                          value={textStyle.letterSpacing}
+                          onChange={(e) => setTextStyle(prev => ({
+                            ...prev,
+                            letterSpacing: Number(e.target.value)
+                          }))}
                         />
                       </div>
 
-                      <div className="position-controls">
-                        <div className="range-control">
-                          <span>X: {textPosition.x}%</span>
+                      <div className="text-properties">
+                        <select 
+                          value={fontFamily}
+                          onChange={(e) => setFontFamily(e.target.value)}
+                          className="font-select"
+                        >
+                          {FONT_FAMILIES.map(font => (
+                            <option 
+                              key={font} 
+                              value={font}
+                              style={{ fontFamily: font }}
+                            >
+                              {font}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="color-input-wrapper compact">
                           <input 
-                            type="range"
-                            value={textPosition.x}
-                            onChange={(e) => setTextPosition(prev => ({
-                              ...prev,
-                              x: Number(e.target.value)
-                            }))}
-                            min="0"
-                            max="100"
+                            type="color"
+                            value={textColor}
+                            onChange={(e) => setTextColor(e.target.value)}
                           />
                         </div>
+                      </div>
+
+                      <div className="size-position-controls">
                         <div className="range-control">
-                          <span>Y: {textPosition.y}%</span>
+                          <span>Size: {fontSize}px</span>
                           <input 
                             type="range"
-                            value={textPosition.y}
-                            onChange={(e) => setTextPosition(prev => ({
-                              ...prev,
-                              y: Number(e.target.value)
-                            }))}
-                            min="0"
-                            max="100"
+                            value={fontSize}
+                            onChange={(e) => setFontSize(Number(e.target.value))}
+                            min="24"
+                            max="200"
+                            step="2"
                           />
+                        </div>
+
+                        <div className="position-controls">
+                          <div className="range-control">
+                            <span>X: {textPosition.x}%</span>
+                            <input 
+                              type="range"
+                              value={textPosition.x}
+                              onChange={(e) => setTextPosition(prev => ({
+                                ...prev,
+                                x: Number(e.target.value)
+                              }))}
+                              min="0"
+                              max="100"
+                            />
+                          </div>
+                          <div className="range-control">
+                            <span>Y: {textPosition.y}%</span>
+                            <input 
+                              type="range"
+                              value={textPosition.y}
+                              onChange={(e) => setTextPosition(prev => ({
+                                ...prev,
+                                y: Number(e.target.value)
+                              }))}
+                              min="0"
+                              max="100"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <button 
-                onClick={handleDownload}
-                className="download-btn"
-                disabled={isProcessing}
-              >
-                💾 Download Image
-              </button>
+                <button 
+                  onClick={handleDownload}
+                  className="download-btn"
+                  disabled={isProcessing}
+                >
+                  💾 Download Image
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="preview-panel">
-            <canvas ref={canvasRef} className="processed-image" />
-          </div>
-        </section>
-      )}
-      
-      <footer className="editor-footer">
-        <p>Free online image editor - No signup required</p>
-        <p>© {new Date().getFullYear()} Your Image Editor</p>
-      </footer>
-    </main>
+            <div className="preview-panel">
+              <canvas ref={canvasRef} className="processed-image" />
+            </div>
+          </section>
+        )}
+        
+        <footer className="editor-footer">
+          <p>Free online image editor - No signup required</p>
+          <p>© {new Date().getFullYear()} Your Image Editor</p>
+        </footer>
+      </main>
+      <Analytics />
+    </>
   )
 }
 
