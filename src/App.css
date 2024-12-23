@@ -826,3 +826,28 @@ input:checked + .toggle-slider:before {
   font-size: 1rem;
   font-weight: 600;
 }
+
+.enhance-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.enhance-btn:hover {
+  background-color: #2563eb;
+}
+
+.enhanced-image-preview {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.enhanced-image-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}

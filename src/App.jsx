@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { removeBackground } from '@imgly/background-removal'
 import './App.css'
 import { Analytics } from "@vercel/analytics/react"
+import Upscaler from 'upscaler'
 const FONT_FAMILIES = [
   'Arial',
   'Times New Roman',
@@ -96,6 +97,8 @@ function App() {
     letterSpacing: 0,
   });
   const [photoEdits, setPhotoEdits] = useState(DEFAULT_PHOTO_EDITS);
+  const [enhancedImage, setEnhancedImage] = useState(null);
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
   // Add reset function
   const resetPhotoEdits = () => {
@@ -148,17 +151,20 @@ function App() {
   }
 
   const handleDownload = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    // Create a temporary link element
-    const link = document.createElement('a')
-    link.download = 'edited-image.png'
-    link.href = canvas.toDataURL('image/png')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+    // Convert the canvas to a data URL
+    const imageUrl = canvas.toDataURL('image/png', 1.0); // Use 'image/jpeg' for JPEG format, 1.0 for maximum quality
+
+    // Create a link element to trigger the download
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'edited-image.png'; // Set the desired file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handlePhotoEdit = (type, value) => {
     setPhotoEdits(prev => ({ ...prev, [type]: value }));
