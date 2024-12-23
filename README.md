@@ -26,5 +26,5 @@ A powerful online image editor with AI background removal, text effects, and pho
  Remove.bg API
  CSS3
 ## Live Demo
-Visit [https://your-domain.vercel.app](https://your-domain.vercel.app)
+Visit [https://pixelcraft-editor.vercel.app/](https://pixelcraft-editor.vercel.app/)
 ## Local Development
