@@ -331,7 +331,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div className="image-editor">
       <main className="image-editor">
         <header className="editor-header">
           <h1 className="editor-title">Free Online Image Editor</h1>
@@ -667,12 +667,30 @@ function App() {
         )}
         
         <footer className="editor-footer">
-          <p>Free online image editor - No signup required</p>
+          <div className="footer-content">
+            <p>Free online image editor - No signup required</p>
+            <div className="footer-links">
+              <a href="/about">About Us</a>
+              <a href="/contact">Contact</a>
+              <a href="/privacy">Privacy Policy</a>
+            </div>
+            <div className="social-media">
+              <a href="https://twitter.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                <img src="/icons/twitter.svg" alt="Twitter" />
+              </a>
+              <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                <img src="/icons/facebook.svg" alt="Facebook" />
+              </a>
+              <a href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                <img src="/icons/instagram.svg" alt="Instagram" />
+              </a>
+            </div>
+          </div>
           <p>© {new Date().getFullYear()} Your Image Editor</p>
         </footer>
       </main>
       <Analytics />
-    </>
+    </div>
   )
 }
 
