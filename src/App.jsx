@@ -666,6 +666,7 @@ function App() {
       )}
 
       <footer className="editor-footer">
+        <p>Free online image editor - No signup required</p>
         <p>Made with ❤️ by Bibek</p>
       </footer>
     </div>
