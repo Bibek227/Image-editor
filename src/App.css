@@ -857,6 +857,7 @@ input:checked + .toggle-slider:before {
   padding: 20px;
   text-align: center;
   border-top: 1px solid #e2e8f0; /* Subtle top border */
+  margin-top: auto; /* Push footer to the bottom */
 }
 
 .footer-content {
@@ -899,6 +900,30 @@ input:checked + .toggle-slider:before {
 
 .social-media img:hover {
   transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.editor-footer p {
+  color: #6b7280; /* Subtle text color */
+  font-size: 0.875rem; /* Smaller font size */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.image-editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the editor takes full height */
+}
+
+.editor-footer {
+  background-color: #f8fafc; /* Light background color */
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0; /* Subtle top border */
+  margin-top: auto; /* Push footer to the bottom */
 }
 
 .editor-footer p {
