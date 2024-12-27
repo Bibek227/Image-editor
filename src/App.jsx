@@ -666,8 +666,7 @@ function App() {
       )}
 
       <footer className="editor-footer">
-        <p>Free online image editor - No signup required</p>
-        <p>© {new Date().getFullYear()} Your Image Editor</p>
+        <p>Made with ❤️ by Bibek</p>
       </footer>
     </div>
   )
